@@ -112,6 +112,14 @@ robot_types:
       enabled: false
       marker: painter_frame
 robots:
+  cf13:
+    enabled: true
+    initial_position:
+    - 0
+    - 0
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/80/2M/E7E7E7E70D
   cf16:
     enabled: true
     initial_position:
@@ -120,11 +128,3 @@ robots:
     - 0
     type: cf21_single_marker
     uri: radio://*/100/2M/E7E7E7E710
-  cf60:
-    enabled: true
-    initial_position:
-    - 0
-    - 0
-    - 0
-    type: cf21_single_marker
-    uri: radio://*/80/2M/E7E7E7E73C
