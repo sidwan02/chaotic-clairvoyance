@@ -92,7 +92,7 @@ class worker_node(Node):
             goto_duration(groupState, 0, 0, 2, 3)
             start_time += 6
 
-        self.timeHelper.sleepUntil(start_time)
+        self.timeHelper.sleepUntil(start_time + 3)
 
         land(groupState, 0, 3)
 
