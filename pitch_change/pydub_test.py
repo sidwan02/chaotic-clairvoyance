@@ -17,13 +17,12 @@ for octaves in np.linspace(-1, 1, 21):
         sound.raw_data, overrides={"frame_rate": new_sample_rate}
     )
     hipitch_sound = hipitch_sound.set_frame_rate(44100)
-    # export / save pitch changed sound
-    # hipitch_sound.export(f"octave_{octaves}.wav", format="wav")
-    # play(hipitch_sound)
-    # buffer = io.BytesIO()
-    # hipitch_sound.export(buffer, format="wav")
+
+    hipitch_sound = hipitch_sound[0 : 3 * 1000]
 
     # playback = _play_with_simpleaudio(audio_segment)
+
+    hipitch_sound = hipitch_sound.fade_in(500).fade_out(500)
 
     playback = sa.play_buffer(
         hipitch_sound.raw_data,
