@@ -32,6 +32,7 @@ class MinimalSubscriber(Node):
 
 
 def main(args=None):
+    # clear the pickle file
     afile = open("log_positions.pkl", "wb")
     afile.close()
 
@@ -48,7 +49,7 @@ def main(args=None):
     rclpy.shutdown()
 
 
-def load_pickle(filename):
+def load_pickle(filename="log_positions.pkl", verbose=False):
     msgs = []
     try:
         afile = open(filename, "rb")
@@ -64,7 +65,28 @@ def load_pickle(filename):
 
     # print(msgs)
     # print(len(msgs))
-    return msgs
+    if verbose:
+        return msgs
+    else:
+        positions = []
+        for msg in msgs:
+            for drone_tf in msg.transforms:
+                positions.append(
+                    (
+                        drone_tf.child_frame_id,
+                        drone_tf.header.stamp.sec,
+                        drone_tf.header.stamp.nanosec,
+                        drone_tf.transform.translation.x,
+                        drone_tf.transform.translation.y,
+                        drone_tf.transform.translation.z,
+                    )
+                )
+
+        afile = open("log_positions_processed.pkl", "ab+")
+        pickle.dump(positions, afile)
+        afile.close()
+
+        print(positions)
 
 
 if __name__ == "__main__":
