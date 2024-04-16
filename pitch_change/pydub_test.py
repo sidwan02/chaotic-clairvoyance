@@ -1,17 +1,24 @@
 # https://batulaiko.medium.com/how-to-pitch-shift-in-python-c59b53a84b6d
 # https://github.com/jiaaro/pydub/issues/160#issuecomment-497953546
 
+from vertical_oscillation.log_positions import load_pickle
+
 import numpy as np
 from pydub import AudioSegment
-from pydub.playback import _play_with_simpleaudio
+
+# from pydub.playback import _play_with_simpleaudio
 import simpleaudio as sa
 import time
 
-filename = "./sounds/sound1.wav"
+sounds = ["./sounds/sound1.wav", "./sounds/violin2.wav"]
+midi_number = [wav_to_midi(sound, 0, 1000) for sound in sounds]
+
 sound = AudioSegment.from_file(filename, format=filename[-3:])
 
-octaves = 0.5
-for octaves in np.linspace(-1, 1, 21):
+
+# octaves = 0.5
+# for octaves in np.linspace(-1, 1, 21):
+for octaves in np.linspace(-1, 1, 2):
     new_sample_rate = int(sound.frame_rate * (2.0**octaves))
     hipitch_sound = sound._spawn(
         sound.raw_data, overrides={"frame_rate": new_sample_rate}
@@ -32,5 +39,8 @@ for octaves in np.linspace(-1, 1, 21):
     )
 
     # end playback after 3 seconds
-    time.sleep(3)
-    playback.stop()
+    time.sleep(1)
+    # if we want overlapping sounds, comment this out. But still need a time sleep that's longer than 0 seconds.
+    # playback.stop()
+
+time.sleep(10)

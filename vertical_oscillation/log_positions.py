@@ -48,7 +48,7 @@ def main(args=None):
     rclpy.shutdown()
 
 
-def load_and_print_pickle():
+def load_pickle():
     msgs = []
     try:
         afile = open("log_positions.pkl", "rb")
@@ -62,10 +62,10 @@ def load_and_print_pickle():
     except FileNotFoundError:
         print("Pickle file not found.")
 
-    print(msgs)
-    print(len(msgs))
+    # print(msgs)
+    # print(len(msgs))
 
 
 if __name__ == "__main__":
     # main()
-    load_and_print_pickle()
+    load_pickle()
