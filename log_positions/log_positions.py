@@ -48,10 +48,10 @@ def main(args=None):
     rclpy.shutdown()
 
 
-def load_pickle():
+def load_pickle(filename):
     msgs = []
     try:
-        afile = open("log_positions.pkl", "rb")
+        afile = open(filename, "rb")
         while 1:
             try:
                 msg = pickle.load(afile)
@@ -64,6 +64,7 @@ def load_pickle():
 
     # print(msgs)
     # print(len(msgs))
+    return msgs
 
 
 if __name__ == "__main__":

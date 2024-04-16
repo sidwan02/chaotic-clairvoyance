@@ -1,7 +1,9 @@
 # https://batulaiko.medium.com/how-to-pitch-shift-in-python-c59b53a84b6d
 # https://github.com/jiaaro/pydub/issues/160#issuecomment-497953546
 
-from vertical_oscillation.log_positions import load_pickle
+
+from log_positions.log_positions import load_pickle
+from pitch_change.find_freq import wav_to_midi
 
 import numpy as np
 from pydub import AudioSegment
@@ -11,7 +13,12 @@ import simpleaudio as sa
 import time
 
 sounds = ["./sounds/sound1.wav", "./sounds/violin2.wav"]
-midi_number = [wav_to_midi(sound, 0, 1000) for sound in sounds]
+midi_pivot = [wav_to_midi(sound, 0, 1000) for sound in sounds]
+
+
+msgs = load_pickle("./log_positions/log_positions.pkl")
+print(msgs)
+raise Exception("Stop here.")
 
 sound = AudioSegment.from_file(filename, format=filename[-3:])
 
