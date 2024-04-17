@@ -6,11 +6,16 @@ from pydub import AudioSegment
 from pydub.playback import _play_with_simpleaudio
 import simpleaudio as sa
 import time
+import random
 
 filename = "./sounds/sound1.wav"
 sound = AudioSegment.from_file(filename, format=filename[-3:])
 
 octaves = 0.5
+
+def randomOctave():
+    random.uniform(-1.5, 1.5)
+
 for octaves in np.linspace(-1, 1, 21):
     new_sample_rate = int(sound.frame_rate * (2.0**octaves))
     hipitch_sound = sound._spawn(
