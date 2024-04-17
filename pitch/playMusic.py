@@ -19,12 +19,12 @@ def randomTime():
     return random.uniform(1.0,3.0)
 
 for i in range(20):
-#def playNote():
     octave_shift = randomOctave()
     new_sample_rate = int(sound.frame_rate * (2.0 ** octave_shift))
     hipitch_sound = sound._spawn(sound.raw_data, overrides={'frame_rate': new_sample_rate})
     hipitch_sound = hipitch_sound.set_frame_rate(44100)
+    hipitch_sound = hipitch_sound.fade_out(500)
     p = _play_with_simpleaudio(hipitch_sound)
-    print("played sound")
+    print("Played", i + 1)
     time.sleep(randomTime())
     p.stop()
