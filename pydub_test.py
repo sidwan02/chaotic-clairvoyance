@@ -9,21 +9,91 @@ import random
 import numpy as np
 from pydub import AudioSegment
 
-# from pydub.playback import _play_with_simpleaudio
 import simpleaudio as sa
 import time
 
-sounds = [
+# TODO: first, modulate all wav files to be middle C. this will help with harmonization better. use the midi_pivots to help with this.
+filenames = [
     # "./sounds/guitar.wav",
-    # "./sounds/sound1.wav",
+    "./sounds/sound1.wav",
     # "./sounds/sound2.wav",
     # "./sounds/violin.wav",
     # "./sounds/violin1.wav",
     "./sounds/violin2.wav",
     # "./sounds/violin3.wav",
 ]
+sounds = [
+    AudioSegment.from_file(filename, format=filename[-3:]) for filename in filenames
+]
 
-# midi_pivots = [wav_to_midi(sound, 0, 1000) for sound in sounds]
+key = "C"
+scale = "minor"
+
+# these are notes in the 4th octave
+key_to_midi = {
+    "C": 60,
+    "C♯": 61,
+    "D♭": 61,
+    "D": 62,
+    "D♯": 63,
+    "E♭": 63,
+    "E": 64,
+    "F": 65,
+    "F♯": 66,
+    "G♭": 66,
+    "G": 67,
+    "G♯": 68,
+    "A♭": 68,
+    "A": 69,
+    "A♯": 70,
+    "B♭": 70,
+    "B": 71,
+}
+
+scale_configs = {
+    "major": [0, 2, 4, 5, 7, 9, 11, 12],
+    "minor": [0, 2, 3, 5, 7, 8, 10, 12],
+}
+
+
+midi_original = [wav_to_midi(fn, 0, 1000) for fn in filenames]
+
+
+def change_semitones(sound, semitones, length=-1):
+    octave_delta = semitones / 12
+    new_sample_rate = int(sound.frame_rate * (2.0**octave_delta))
+    hipitch_sound = sound._spawn(
+        sound.raw_data, overrides={"frame_rate": new_sample_rate}
+    )
+    hipitch_sound = hipitch_sound.set_frame_rate(44100)
+
+    hipitch_sound = hipitch_sound[0:length]
+
+    hipitch_sound = hipitch_sound.fade_in(500).fade_out(500)
+
+    return hipitch_sound
+
+
+sounds_normalized = [
+    change_semitones(sound, key_to_midi[key] - midi, 5 * 1000)
+    for sound, midi in zip(sounds, midi_original)
+]
+
+# test the sounds
+"""
+for sound in sounds_normalized:
+    playback = sa.play_buffer(
+        sound.raw_data,
+        num_channels=sound.channels,
+        bytes_per_sample=sound.sample_width,
+        sample_rate=sound.frame_rate,
+    )
+
+    time.sleep(len(sound) / 1000)
+    playback.stop()
+
+# raise Exception("stop here")
+"""
 
 msgs = load_pickle("./log_positions/log_positions_processed.pkl")
 
@@ -33,42 +103,22 @@ final_wav = AudioSegment.silent(duration=30 * 1000)
 length_so_far = 0
 prev_sound_len = 0
 
+
 for _ in range(30):
-    filename = random.choice(sounds)
-    sound = AudioSegment.from_file(filename, format=filename[-3:])
+    sound = random.choice(sounds_normalized)
+
+    semitone_delta = random.choice(scale_configs[scale])
+
     # proportion of length
     length_prop = np.random.uniform(0.5, 1)
-    original_length = len(sound)
-    delay_prop = np.random.uniform(0.5, 1)
 
-    # octave_delta = np.random.uniform(-2, 0)
-    # major scale
-    # major
-    octave_delta = random.choice(np.array([0, 2, 4, 5, 7, 9, 11, 12]) / 12)
-    # minor
-    # octave_delta = random.choice(np.array([0, 2, 3, 5, 7, 8, 10, 12]) / 12)
+    # song can't be more than 3 seconds
+    length = min(len(sound), 3000) * length_prop
 
-    new_sample_rate = int(sound.frame_rate * (2.0**octave_delta))
-    hipitch_sound = sound._spawn(
-        sound.raw_data, overrides={"frame_rate": new_sample_rate}
-    )
-    hipitch_sound = hipitch_sound.set_frame_rate(44100)
-
-    # song can't be more than 5 seconds
-    hipitch_sound = hipitch_sound[0 : min(original_length, 3000) * length_prop]
-
-    hipitch_sound = hipitch_sound.fade_in(500).fade_out(500)
-
-    # print(type(hipitch_sound))
-
-    # playback = sa.play_buffer(
-    #     hipitch_sound.raw_data,
-    #     num_channels=hipitch_sound.channels,
-    #     bytes_per_sample=hipitch_sound.sample_width,
-    #     sample_rate=hipitch_sound.frame_rate,
-    # )
-
+    hipitch_sound = change_semitones(sound, semitone_delta, length)
     # https://stackoverflow.com/questions/43406129/python-overlay-more-than-3-wav-files-end-to-end
+
+    delay_prop = np.random.uniform(0.5, 1)
 
     # start the next sound 3 seconds before the previous sound ends
     insert_time = length_so_far - prev_sound_len * delay_prop
@@ -84,13 +134,6 @@ for _ in range(30):
 
     print(f"inserted sound of duration {prev_sound_len} at position {insert_time}")
     print(f"new total length: {length_so_far}")
-
-    # end playback after 3 seconds
-    # time.sleep(delay)
-    # if we want overlapping sounds, comment this out. But still need a time sleep that's longer than 0 seconds.
-    # playback.stop()
-
-# time.sleep(10)
 
 final_wav.export("mixed_sounds.wav", format="wav")
 
