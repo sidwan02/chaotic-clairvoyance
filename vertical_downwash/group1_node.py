@@ -78,11 +78,15 @@ class worker_node(Node):
         # Block Name: firstDroneTakeoff
         start_time = 0.07999999999999965
         self.timeHelper.sleepUntil(start_time)
-        takeoff(groupState, 1.7, 3)
-        stop_and_hover(groupState)
-        # Block Name: firstDroneLand
-        start_time = 19.002929687499986
-        self.timeHelper.sleepUntil(start_time)
+        # takeoff(groupState, 1.7, 3)
+        # stop_and_hover(groupState)
+        # # Block Name: firstDroneLand
+        # start_time = 19.002929687499986
+        # self.timeHelper.sleepUntil(start_time)
+        # land(groupState, 0,3)
+        takeoff(groupState, 0.5, 3)
+        goto_duration(groupState, 0,0.5,0.5,3)
+        rotate(groupState, lambda groupState: circle(groupState, 1, 0.5, 6.283185307179586,'null'), 0, 1.5707963267948966, 0)
         land(groupState, 0,3)
 
         
