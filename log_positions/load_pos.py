@@ -26,7 +26,7 @@ def load_pickle(filename, verbose=False):
         except FileNotFoundError:
             print("Pickle file not found.")
 
-        print(positions)
+        # print(positions)
         return positions
 
 
