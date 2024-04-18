@@ -16,7 +16,7 @@ import time
 sounds = [
     # "./sounds/guitar.wav",
     # "./sounds/sound1.wav",
-    "./sounds/sound2.wav",
+    # "./sounds/sound2.wav",
     # "./sounds/violin.wav",
     # "./sounds/violin1.wav",
     "./sounds/violin2.wav",
@@ -41,7 +41,12 @@ for _ in range(30):
     original_length = len(sound)
     delay_prop = np.random.uniform(0.5, 1)
 
-    octave_delta = np.random.uniform(-1, 1)
+    # octave_delta = np.random.uniform(-2, 0)
+    # major scale
+    # major
+    octave_delta = random.choice(np.array([0, 2, 4, 5, 7, 9, 11, 12]) / 12)
+    # minor
+    # octave_delta = random.choice(np.array([0, 2, 3, 5, 7, 8, 10, 12]) / 12)
 
     new_sample_rate = int(sound.frame_rate * (2.0**octave_delta))
     hipitch_sound = sound._spawn(
@@ -96,5 +101,5 @@ playback = sa.play_buffer(
     sample_rate=final_wav.frame_rate,
 )
 
-time.sleep(30)
+time.sleep(len(final_wav) / 100)
 playback.stop()
