@@ -5,10 +5,8 @@ from crazyflie_py import generate_trajectory
 import numpy as np
 from blocklyTranslations import *
 from types import SimpleNamespace
-from TimeHelper import TimeHelper  # TODO add to files downloaded
-
+from TimeHelper import TimeHelper # TODO add to files downloaded
 Hz = 30
-
 
 class worker_node(Node):
 
@@ -18,16 +16,16 @@ class worker_node(Node):
         num_nodes: number of nodes (threads) in total
         """
         super().__init__("worker_node_{}".format(id))
-        assert isinstance(id, int)
+        assert(isinstance(id, int))
         self.id = id
         self.num_nodes = num_nodes
         self.crazyflies = crazyflies
 
-        self.timer = self.create_timer(1 / Hz, self.timer_callback)
+        self.timer = self.create_timer(1/Hz, self.timer_callback)
         self.timeHelper = TimeHelper(self)
         self.running = False
         self.done = False
-
+    
     def compute_trajectories(self):
         """
         Inject Trajectory computation code here...
@@ -38,9 +36,9 @@ class worker_node(Node):
         return trajectories
 
     def upload_trajectories(crazyflies, trajectories):
-        """
-        Upload trajectories to crazyflies one by one
-        """
+        '''
+            Upload trajectories to crazyflies one by one
+        '''
 
         for i, traj in enumerate(trajectories):
             for cf in crazyflies:
@@ -48,7 +46,7 @@ class worker_node(Node):
 
     def start(self):
         """
-        Start execution of blocks
+            Start execution of blocks
         """
         trajectories = self.compute_trajectories()
         self.upload_trajectories(trajectories)
@@ -56,13 +54,13 @@ class worker_node(Node):
 
     def time(self):
         return self.get_clock().now().nanoseconds / 1e9
-
+    
     def execute_blocks(self):
         """
         Must be injected into...
 
         Typical format should be:
-
+        
         start_time = 0.0
         self.timeHelper.sleepUntil(start_time)
         takeoff(crazyflies, height=1.0, duration=2.0)
@@ -70,36 +68,31 @@ class worker_node(Node):
         start_time = 5.0
         self.wait_until(start_time)
         land(crazyflies, height=0.0, duration=2.0)
-
+        
         ...
 
         Where a new start time is added for each block.
         """
-        groupState = SimpleNamespace(
-            crazyflies=self.crazyflies, timeHelper=self.timeHelper
-        )
+        groupState = SimpleNamespace(crazyflies=self.crazyflies, timeHelper=self.timeHelper)
         ### ---------Insert Execution Code Here------------
-        # Block Name: firstDroneTakeoff
-        start_time = 0.07999999999999965
+        # Block Name: setOscillatorTwo
+        start_time = 1.25
         self.timeHelper.sleepUntil(start_time)
-        takeoff(groupState, 2, 3)
-        # stop_and_hover(groupState)
-        # Block Name: firstDroneLand
+        goto_velocity_relative_position(groupState, 0,0,1,0.25)
+        goto_velocity_relative_position(groupState, 0,0.2,0,0.25)
+        # Block Name: downMovement
+        start_time = 7.75
+        self.timeHelper.sleepUntil(start_time)
+        goto_velocity_relative_position(groupState, 0,0,-0.4,0.25)
+        # Block Name: upMovement
+        start_time = 9.38
+        self.timeHelper.sleepUntil(start_time)
+        goto_velocity_relative_position(groupState, 0,0,0.4,0.25)
 
-        start_time = 10
-        for i in range(10):
-            goto_duration(groupState, 0, 0, 1.6, 3)
-            goto_duration(groupState, 0, 0, 2, 3)
-            start_time += 6
-
-        self.timeHelper.sleepUntil(start_time + 3)
-
-        land(groupState, 0, 3)
-
+        
         self.done = True
-
+    
     def timer_callback(self):
         if not self.running:
             self.start()
             self.running = True
-            
