@@ -87,7 +87,7 @@ class worker_node(Node):
         takeoff(groupState, 1, 3)
 
         # Block Name: landAll
-        self.timeHelper.sleepUntil(start_time + 15)
+        self.timeHelper.sleepUntil(start_time + 10)
         land(groupState, 0, 3)
 
         self.done = True
