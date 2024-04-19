@@ -34,6 +34,15 @@ class worker_node(Node):
         """
         trajectories = []
         ### -----Insert Trajectories Here-------
+        num_points = 100
+        amplitude = 0.5
+        frequency = 0.5
+        t = np.linspace(0, 2 * np.pi, num_points)
+        x = np.cos(t)
+        y = np.sin(t)
+        z = amplitude * np.sin(frequency * t)
+        trajectory = generate_trajectory([x, y, z], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1)
+        trajectories.append(trajectory)
 
         return trajectories
 
@@ -57,7 +66,7 @@ class worker_node(Node):
     def time(self):
         return self.get_clock().now().nanoseconds / 1e9
 
-    def sine_wave_circle(groupState, radius, amplitude, frequency, duration):
+    def sine_wave_circle(self, groupState, radius, amplitude, frequency, duration):
         start_time = groupState.timeHelper.time()
         end_time = start_time + duration
         while groupState.timeHelper.time() < end_time:
@@ -65,8 +74,10 @@ class worker_node(Node):
             x = radius * np.cos(frequency * t)
             y = radius * np.sin(frequency * t)
             z = amplitude * np.sin(frequency * t)
-            goto_duration(groupState, x, y, z, 3)  
-        
+            z = max(0.5, z)
+            goto_duration(groupState, x, y, z, 3)
+            # goto_velocity(groupState, x, y, z, 0.5)
+
     def execute_blocks(self):
         """
         Must be injected into...
@@ -101,10 +112,20 @@ class worker_node(Node):
         # goto_duration(groupState, 0, 0.5, 1, 3)
         # land(groupState, 0, 3)
         takeoff(groupState, 1.3, 3)
+        # chaos
+        # goto_duration(groupState, 0, 0.5, 1.3, 3)
+        # self.sine_wave_circle(
+        #     groupState, radius=1, amplitude=1, frequency=0.5, duration=20
+        # )
         goto_duration(groupState, 0, 0.5, 1.3, 3)
-        self.sine_wave_circle(groupState, radius=1, amplitude=0.2, frequency=1, duration=10) 
+        rotate(
+            groupState,
+            lambda groupState: circle(groupState, 1, 0.5, 6.28, "clockwise"),
+            0,
+            1.5707963267948966,
+            0,
+        )
         land(groupState, 0, 3)
-
 
         self.done = True
 
