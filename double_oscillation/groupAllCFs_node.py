@@ -75,12 +75,12 @@ class worker_node(Node):
         """
         groupState = SimpleNamespace(crazyflies=self.crazyflies, timeHelper=self.timeHelper)
         ### ---------Insert Execution Code Here------------
-        # Block Name: setBlue
+        # Block Name: setGreen
         start_time = 0
         self.timeHelper.sleepUntil(start_time)
         setLEDColorFromHex(groupState, "#00ff00")
+        setLEDColorFromHex(groupState, "#99D19C")
         
-        setLEDColorFromHex(groupState, "#00c3ff")
         # Block Name: launchAll
         start_time = 1.01
         self.timeHelper.sleepUntil(start_time)

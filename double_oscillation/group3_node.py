@@ -80,18 +80,24 @@ class worker_node(Node):
         self.timeHelper.sleepUntil(start_time)
         goto_velocity_relative_position(groupState, 0,0,1,0.25)
         goto_velocity_relative_position(groupState, 0,-0.2,0,0.25)
+        
         # Block Name: downMovement
         start_time = 6.12
         self.timeHelper.sleepUntil(start_time)
         goto_velocity_relative_position(groupState, 0,0,-0.4,0.25)
+        setLEDColorFromHex(groupState, "#BA3F1D")
+
         # Block Name: upMovement
         start_time = 7.75
         self.timeHelper.sleepUntil(start_time)
         goto_velocity_relative_position(groupState, 0,0,0.4,0.25)
+        setLEDColorFromHex(groupState, "#99D19C")
+
         # Block Name: downMovement
         start_time = 9.38
         self.timeHelper.sleepUntil(start_time)
         goto_velocity_relative_position(groupState, 0,0,-0.4,0.25)
+        setLEDColorFromHex(groupState, "#BA3F1D")
 
         
         self.done = True
