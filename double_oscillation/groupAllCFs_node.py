@@ -80,13 +80,16 @@ class worker_node(Node):
         self.timeHelper.sleepUntil(start_time)
         setLEDColorFromHex(groupState, "#00ff00")
         setLEDColorFromHex(groupState, "#99D19C")
-        
+
         # Block Name: launchAll
         start_time = 1.01
         self.timeHelper.sleepUntil(start_time)
         takeoff(groupState, 1, 3)
 
-        
+        # Block Name: landAll
+        self.timeHelper.sleepUntil(start_time + 15)
+        land(groupState, 0, 3)
+
         self.done = True
     
     def timer_callback(self):
