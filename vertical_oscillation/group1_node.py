@@ -102,4 +102,3 @@ class worker_node(Node):
         if not self.running:
             self.start()
             self.running = True
-            

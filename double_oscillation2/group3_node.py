@@ -75,22 +75,56 @@ class worker_node(Node):
         """
         groupState = SimpleNamespace(crazyflies=self.crazyflies, timeHelper=self.timeHelper)
         ### ---------Insert Execution Code Here------------
-        # Block Name: setGreen
-        start_time = 0
-        self.timeHelper.sleepUntil(start_time)
-        setLEDColorFromHex(groupState, "#00ff00")
-        setLEDColorFromHex(groupState, "#99D19C")
-
         # Block Name: launchAll
-        start_time = 1.01
+        start_time = 0.020000000000000018
         self.timeHelper.sleepUntil(start_time)
         takeoff(groupState, 1, 3)
+        setLEDColorFromHex(groupState, "#00c3ff")
+        # Block Name: setOscillatorThree
+        start_time = 3.15
+        self.timeHelper.sleepUntil(start_time)
+        goto_velocity_relative_position(groupState, 0,0,1,0.25)
+        goto_velocity_relative_position(groupState, 0,-0.2,0,0.25)
+        # Block Name: downMovement
+        start_time = 7.9867187500000005
+        self.timeHelper.sleepUntil(start_time)
+        goto_velocity_relative_position(groupState, 0,0,-0.4,0.25)
+        # Block Name: upMovement
+        start_time = 9.615
+        self.timeHelper.sleepUntil(start_time)
+        goto_velocity_relative_position(groupState, 0,0,0.4,0.25)
+        # Block Name: downMovement
+        start_time = 11.242656250000005
+        self.timeHelper.sleepUntil(start_time)
+        goto_velocity_relative_position(groupState, 0,0,-0.4,0.25)
+        # Block Name: landThree
+        start_time = 12.89
+        self.timeHelper.sleepUntil(start_time)
+        goto_velocity_relative_position(groupState, 0,0.2,0,0.25)
+        land(groupState, 0,6)
 
-        # Block Name: landAll
-        self.timeHelper.sleepUntil(start_time + 10)
-        land(groupState, 0, 3)
-
+        
         self.done = True
+
+# sketch of what needs done here
+# setLEDColorFromHex(groupState, "#99D19C") #green
+# setLEDColorFromHex(groupState, "#BA3F1D") #red
+
+# start_time = 0.07999999999999965
+        # self.timeHelper.sleepUntil(start_time)
+        # takeoff(groupState, 2, 3)
+        # stop_and_hover(groupState)
+        # Block Name: firstDroneLand
+
+        # start_time = 10
+        # for i in range(10):
+        #    goto_duration(groupState, 0, 0, 1.6, 3)
+        #    goto_duration(groupState, 0, 0, 2, 3)
+        #    start_time += 6
+
+        # self.timeHelper.sleepUntil(start_time + 3)
+
+        # land(groupState, 0, 3)
     
     def timer_callback(self):
         if not self.running:

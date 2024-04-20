@@ -38,12 +38,10 @@ def main():
     cfs = []
 
     #   -----------Insert Nodes Here----------- 
-    import groupAllCFs_node
+    import group1_node
     cfs = []
     cfs.append(crazyflies[0])
-    cfs.append(crazyflies[1])
-    cfs.append(crazyflies[2])
-    nodes.append(groupAllCFs_node.worker_node(cfs, len(nodes), 1))
+    nodes.append(group1_node.worker_node(cfs, len(nodes), 2))
 
 
     import group2_node
