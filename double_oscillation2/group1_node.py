@@ -76,34 +76,16 @@ class worker_node(Node):
         groupState = SimpleNamespace(crazyflies=self.crazyflies, timeHelper=self.timeHelper)
         ### ---------Insert Execution Code Here------------
         # Block Name: launchAll
-        start_time = 0.020000000000000018
+        start_time = 0.02
         self.timeHelper.sleepUntil(start_time)
         takeoff(groupState, 1, 3)
-        setLEDColorFromHex(groupState, "#00c3ff")
+        setLEDColorFromHex(groupState, "#99D19C") # green
         # Block Name: landOne
-        start_time = 12.85
+        start_time = 44.0
         self.timeHelper.sleepUntil(start_time)
         land(groupState, 0,3)
 
-        
         self.done = True
-
-# sketch of what needs done here
-#
-# setLEDColorFromHex(groupState, "#99D19C") #green
-# setLEDColorFromHex(groupState, "#BA3F1D") #red
-
-#start_time = 0.09999999999999891
-       # self.timeHelper.sleepUntil(start_time)
-       # takeoff(groupState, 1, 3)
-       # goto_duration(groupState, 0, 0, 1, 3)
-        # stop_and_hover(groupState)
-        # Block Name: secondDroneLand
-
-       # start_time = 10 + 10 * 6
-      #  self.timeHelper.sleepUntil(start_time)
-       # goto_duration(groupState, 0, 0.5, 1, 3)
-       # land(groupState, 0, 3)
     
     def timer_callback(self):
         if not self.running:
