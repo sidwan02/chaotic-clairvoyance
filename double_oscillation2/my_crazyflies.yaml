@@ -1,0 +1,138 @@
+all:
+  broadcasts:
+    delay_between_repeats_ms: 1
+    num_repeats: 15
+  firmware_logging:
+    default_topics:
+      pose:
+        frequency: 10
+    enabled: false
+  firmware_params:
+    commander:
+      enHighLevel: 1
+    kalman:
+      resetEstimation: 1
+    locSrv:
+      extPosStdDev: 1e-3
+      extQuatStdDev: 0.05
+    ring:
+      effect: 7
+      solidBlue: 255
+      solidGreen: 255
+      solidRed: 255
+    stabilizer:
+      controller: 2
+      estimator: 2
+  print_latency: true
+  unicasts:
+    num_repeats: 2
+robot_types:
+  cf21:
+    battery:
+      voltage_critical: 3.7
+      voltage_warning: 3.8
+    big_quad: false
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: default
+  cf21_m1:
+    battery:
+      voltage_critical: 3.7
+      voltage_warning: 3.8
+    big_quad: false
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: m1
+  cf21_m1_big:
+    battery:
+      voltage_critical: 3.7
+      voltage_warning: 3.8
+    big_quad: false
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: m1_big
+  cf21_m2:
+    battery:
+      voltage_critical: 3.7
+      voltage_warning: 3.8
+    big_quad: false
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: m2
+  cf21_m3:
+    battery:
+      voltage_critical: 3.7
+      voltage_warning: 3.8
+    big_quad: false
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: m3
+  cf21_m4:
+    battery:
+      voltage_critical: 3.7
+      voltage_warning: 3.8
+    big_quad: false
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: m4
+  cf21_mocap_deck:
+    battery:
+      voltage_critical: 3.7
+      voltage_warning: 3.8
+    big_quad: false
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: mocap_deck
+  cf21_single_marker:
+    battery:
+      voltage_critical: 3.7
+      voltage_warning: 3.8
+    big_quad: false
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: default_single_marker
+  cf_big:
+    big_quad: true
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: big_frame
+  cf_painter:
+    big_quad: true
+    motion_capture:
+      dynamics: default
+      enabled: false
+      marker: painter_frame
+robots:
+  cf38:
+    enabled: true
+    initial_position:
+    - 0
+    - -0.5
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/120/2M/E7E7E7E726
+  cf45:
+    enabled: true
+    initial_position:
+    - 0
+    - 0.5
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/100/2M/E7E7E7E72D
+  cf9:
+    enabled: true
+    initial_position:
+    - 0
+    - 0
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/80/2M/E7E7E7E709

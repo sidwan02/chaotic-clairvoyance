@@ -6,3 +6,7 @@
 6. Place the crazyflies out in the flight space, making sure the correct crazyflies are in the correct locations and oriented correctly.
 6. run ```ros2 launch launch.py``` in your first terminal. RViz should come up. Confirm that it shows what you are expecting and all crazyflies connect.
 7. In a new terminal tab, run ```python3 launch_nodes.py```. This will launch the ROS nodes for each group (with robots and blocks) in your webapp.
+
+
+when crash, run
+```ros2 run crazyflie chooser.py --configpath=my_crazyflies.yaml```
