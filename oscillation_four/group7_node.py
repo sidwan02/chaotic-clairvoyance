@@ -108,11 +108,11 @@ class worker_node(Node):
         # Block Name: -0.2
         start_time = 26.33
         self.timeHelper.sleepUntil(start_time)
-        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,-0.2,0.25), lambda groupState: goto_velocity_relative_position(groupState, 0.2,0,0,0.1))
-        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,0.2,0.25), lambda groupState: goto_velocity_relative_position(groupState, 0.2,0,0,0.1))
+        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,-0.2,0.25), lambda groupState: goto_velocity_relative_position(groupState, -0.2,0,0,0.1))
+        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,0.2,0.25), lambda groupState: goto_velocity_relative_position(groupState, -0.2,0,0,0.1))
         
-        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,-0.2,0.25), lambda groupState: goto_velocity_relative_position(groupState, 0.2,0,0,0.1))
-        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,0.2,0.25), lambda groupState: goto_velocity_relative_position(groupState, 0.2,0,0,0.1))
+        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,-0.2,0.25), lambda groupState: goto_velocity_relative_position(groupState, -0.2,0,0,0.1))
+        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,0.2,0.25), lambda groupState: goto_velocity_relative_position(groupState, -0.2,0,0,0.1))
         # Block Name: -0.3
         start_time = 34.34
         self.timeHelper.sleepUntil(start_time)
