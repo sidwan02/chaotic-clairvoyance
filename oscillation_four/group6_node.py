@@ -116,8 +116,8 @@ class worker_node(Node):
         # Block Name: -0.3
         start_time = 33.95
         self.timeHelper.sleepUntil(start_time)
-        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,-0.3,0.25), lambda groupState: goto_velocity_relative_position(groupState, 0.2,0,0,0.125))
-        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,0.3,0.25), lambda groupState: goto_velocity_relative_position(groupState, 0.2,0,0,0.125))
+        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,-0.3,0.25), lambda groupState: goto_velocity_relative_position(groupState, -0.2,0,0,0.125))
+        addTrajectories(groupState, lambda groupState: goto_velocity_relative_position(groupState, 0,0,0.3,0.25), lambda groupState: goto_velocity_relative_position(groupState, -0.2,0,0,0.125))
         # Block Name: -0.4
         start_time = 37.17
         self.timeHelper.sleepUntil(start_time)
