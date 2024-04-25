@@ -40,7 +40,7 @@ class MinimalSubscriber(Node):
             pygame.mixer.init()
             pygame.mixer.set_num_channels(8)
 
-            self.start_ns = None
+            self.realtime_play_start_ns = None
 
         # print(msgs)
 
@@ -61,12 +61,14 @@ class MinimalSubscriber(Node):
         self.drone_buffers = defaultdict(lambda: defaultdict(partial(Queue, maxlen=30)))
         self.temp_buffers = defaultdict(lambda: defaultdict(deque))
 
-        self.start_sec = None
+        self.tf_prev_trigger_sec = None
 
         self.length_so_far = 0
         self.prev_sound_len = 0
 
         self.cur_channel = 0
+
+        self.tf_start_sec = None
 
     def listener_callback(self, msg):
         self.get_logger().info('I heard: "%s"' % msg)
@@ -101,9 +103,12 @@ class MinimalSubscriber(Node):
 
         # =========== live processing =================
 
+        if self.tf_start_sec is None:
+            self.tf_start_sec = int(positions[0][1]) + int(positions[0][2]) / 1e9
+
         (
-            self.start_sec,
-            self.start_ns,
+            self.tf_prev_trigger_sec,
+            self.realtime_play_start_ns,
             self.length_so_far,
             self.prev_sound_len,
             self.cur_channel,
@@ -115,8 +120,9 @@ class MinimalSubscriber(Node):
             positions,
             self.scale,
             self.set_modes,
-            self.start_sec,
-            self.start_ns,
+            self.tf_start_sec,
+            self.tf_prev_trigger_sec,
+            self.realtime_play_start_ns,
             self.length_so_far,
             self.prev_sound_len,
             self.cur_channel,

@@ -175,7 +175,7 @@ def setup_processing():
 
     # whether the normalized sound starts of in octave 4 (eg, as middle C), or in octave 5 (eg, as C5)
     base_octave_delta = [0, 0]
-    key = "E"
+    key = "C"
     scale = "minor"
     possible_modes = ["generate_wav", "play_realtime"]
     set_modes = set(possible_modes)
@@ -360,7 +360,7 @@ def process_positions(
         length_prop = np.random.uniform(0.5, 1)
 
         # clip can't be more than 3 seconds
-        length = min(len(sound), 3000) * length_prop
+        length = min(len(sound), 4000) * length_prop
 
         hipitch_sound = change_semitones(sound, semitone_delta, length)
 
