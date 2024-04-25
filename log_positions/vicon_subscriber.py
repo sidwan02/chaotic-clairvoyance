@@ -4,7 +4,9 @@ import rclpy
 from rclpy.node import Node
 from tf2_msgs.msg import TFMessage
 import pickle
-from brew_chaos_live import vicon_callback
+from brew_chaos_new import *
+
+import pygame
 
 # from std_msgs.msg import String
 
@@ -17,6 +19,56 @@ class MinimalSubscriber(Node):
             TFMessage, "tf", self.listener_callback, 1
         )
         self.subscription  # prevent unused variable warning
+
+        setup_processing()
+
+    def setup_processing():
+        # TODO: first, modulate all wav files to be middle C. this will help with harmonization better. use the midi_pivots to help with this.
+
+        # whether the normalized sound starts of in octave 4 (eg, as middle C), or in octave 5 (eg, as C5)
+        base_octave_delta = [0, 0]
+        key = "E"
+        self.scale = "minor"
+        possible_modes = ["generate_wav", "play_realtime"]
+        self.set_modes = set(possible_modes)
+        # self.set_modes = set(["play_realtime"])
+
+        self.sounds_normalized = generate_normalized_sounds(key, base_octave_delta)
+
+        if "play_realtime" in self.set_modes:
+            pygame.mixer.init()
+            pygame.mixer.set_num_channels(8)
+
+            self.start_ns = None
+
+        # print(msgs)
+
+        # 60 second clip
+        self.final_wav = AudioSegment.silent(duration=60 * 1000)
+
+        self.drone_sounds = allocate_sounds(self.sounds_normalized, msgs[0])
+        # print("drone sounds: ", self.drone_sounds)
+
+        # pygame.mixer.Channel(0).play(pygame.mixer.Sound(self.drone_sounds["cf16"].raw_data))
+        # time.sleep(5)
+        # pygame.mixer.Channel(0).play(pygame.mixer.Sound(self.drone_sounds["cf13"].raw_data))
+
+        # time.sleep(5)
+
+        # raise Exception("stop here")
+
+        self.drone_buffers = defaultdict(lambda: defaultdict(partial(Queue, maxlen=30)))
+        self.temp_buffers = defaultdict(lambda: defaultdict(deque))
+
+        self.start_sec = None
+
+        self.length_so_far = 0
+        self.prev_sound_len = 0
+
+        self.cur_channel = 0
+
+        if "generate_wav" in self.set_modes:
+            self.final_wav.export("mixed_sounds.wav", format="wav")
 
     def listener_callback(self, msg):
         self.get_logger().info('I heard: "%s"' % msg)
@@ -50,7 +102,31 @@ class MinimalSubscriber(Node):
         afile.close()
 
         # =========== live processing =================
-        process_positions(positions)
+
+        (
+            self.start_sec,
+            self.start_ns,
+            self.length_so_far,
+            self.prev_sound_len,
+            self.cur_channel,
+            self.drone_buffers,
+            self.temp_buffers,
+            self.final_wav,
+            self.drone_sounds,
+        ) = process_positions(
+            positions,
+            self.scale,
+            self.set_modes,
+            self.start_sec,
+            self.start_ns,
+            self.length_so_far,
+            self.prev_sound_len,
+            self.cur_channel,
+            self.drone_buffers,
+            self.temp_buffers,
+            self.final_wav,
+            self.drone_sounds,
+        )
 
 
 # TODO: figure out how to store this
