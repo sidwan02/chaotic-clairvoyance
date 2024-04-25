@@ -77,6 +77,10 @@ def metric_1(arr, pivot):
     return np.mean(np.array(arr) - pivot)
 
 
+def metric_2(arr, pivot):
+    return np.mean(np.array(arr) - pivot) * np.std(np.array(arr))
+
+
 # TODO: the buffer size is around 1 or 2 when we really expect around 70 - 100, see if the buffers are collecting properly. The semitone bias also randomly jumps to -40 ish. We also have a really long delay when updating the sounds every second.
 
 
@@ -336,12 +340,34 @@ def process_positions(
 
         print("buffer size: ", len(temp_buffers[drone_name]["x_temp"]))
 
-        err = [
-            metric_1(temp_buffers[drone_name][temp], temp_buffers[drone_name][temp][0])
-            for temp in ["x_temp", "y_temp", "z_temp"]
-        ]
+        err = (
+            np.array(
+                [
+                    metric_1(
+                        temp_buffers[drone_name][temp],
+                        temp_buffers[drone_name][temp][0],
+                    )
+                    for temp in ["x_temp", "y_temp", "z_temp"]
+                ]
+            )
+            * 120
+        )
+
+        err_2 = (
+            np.array(
+                [
+                    metric_2(
+                        temp_buffers[drone_name][temp],
+                        temp_buffers[drone_name][temp][0],
+                    )
+                    for temp in ["x_temp", "y_temp", "z_temp"]
+                ]
+            )
+            * 1000
+        )
 
         print("err: ", err)
+        print("err_2: ", err_2)
 
         # TODO: make use of these buffers at some point.
         drone_buffers[drone_name]["x"].append(err[0])
@@ -359,7 +385,7 @@ def process_positions(
 
         # print(err)
         # semitone_delta = random.choice(scale_configs[scale])
-        semitone_delta = np.mean(err) * 120
+        semitone_delta = np.mean(err)
         print("semitone delta: ", semitone_delta)
 
         semitone_delta = bias_semitone(semitone_delta, scale)
