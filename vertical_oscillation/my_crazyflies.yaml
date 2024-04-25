@@ -112,19 +112,19 @@ robot_types:
       enabled: false
       marker: painter_frame
 robots:
-  cf10:
-    enabled: true
-    initial_position:
-    - 0
-    - 0
-    - 0
-    type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E70A
-  cf11:
+  cf3:
     enabled: true
     initial_position:
     - 0
     - 0.5
     - 0
     type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E70B
+    uri: radio://*/120/2M/E7E7E7E703
+  cf45:
+    enabled: true
+    initial_position:
+    - 0
+    - 0
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/100/2M/E7E7E7E72D

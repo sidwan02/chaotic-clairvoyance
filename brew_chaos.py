@@ -309,6 +309,7 @@ def process_positions(
 
     # print("tf_cur_sec: ", tf_cur_sec)
     # print("tf_prev_trigger_sec: ", tf_prev_trigger_sec)
+    print("elapsed time: ", tf_cur_sec - tf_start_sec)
     should_play_flag = (tf_cur_sec - tf_prev_trigger_sec) >= 1
 
     for drone_tf in msg_transforms:
