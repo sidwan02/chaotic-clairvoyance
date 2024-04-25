@@ -4,6 +4,7 @@ import rclpy
 from rclpy.node import Node
 from tf2_msgs.msg import TFMessage
 import pickle
+from brew_chaos_live import vicon_callback
 
 # from std_msgs.msg import String
 
@@ -22,6 +23,7 @@ class MinimalSubscriber(Node):
         # msg_json = json.load(msg)
         # print(msg_json)
 
+        # ============= store the data for later use =============
         afile = open("log_positions.pkl", "ab+")
         pickle.dump(msg, afile)
         afile.close()
@@ -44,6 +46,9 @@ class MinimalSubscriber(Node):
         afile = open("log_positions_processed.pkl", "ab+")
         pickle.dump(positions, afile)
         afile.close()
+
+        # =========== live processing =================
+        vicon_callback(msg.transforms)
 
 
 # TODO: figure out how to store this

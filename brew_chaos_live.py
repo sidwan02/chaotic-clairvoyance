@@ -21,6 +21,9 @@ from collections import defaultdict, deque
 import simpleaudio as sa
 import time
 
+from tf2_msgs.msg import TFMessage
+
+
 # TODO: first, modulate all wav files to be middle C. this will help with harmonization better. use the midi_pivots to help with this.
 filenames = [
     # "./sounds/guitar.wav",
@@ -157,86 +160,88 @@ def bias_semitone(semitone):
     )
 
 
-midi_original = [wav_to_midi(fn, 0, 1000) for fn in filenames]
+def vicon_callback(msg_transforms):
 
+    midi_original = [wav_to_midi(fn, 0, 1000) for fn in filenames]
 
-sounds_normalized = [
-    change_semitones(sound, key_to_midi[key] - midi + oc_del * 12, 5 * 1000)
-    for sound, midi, oc_del in zip(sounds, midi_original, base_octave_delta)
-]
+    sounds_normalized = [
+        change_semitones(sound, key_to_midi[key] - midi + oc_del * 12, 5 * 1000)
+        for sound, midi, oc_del in zip(sounds, midi_original, base_octave_delta)
+    ]
 
-# test the sounds
-"""
-for sound in sounds_normalized:
-    playback = sa.play_buffer(
-        sound.raw_data,
-        num_channels=sound.channels,
-        bytes_per_sample=sound.sample_width,
-        sample_rate=sound.frame_rate,
-    )
+    # test the sounds
+    """
+    for sound in sounds_normalized:
+        playback = sa.play_buffer(
+            sound.raw_data,
+            num_channels=sound.channels,
+            bytes_per_sample=sound.sample_width,
+            sample_rate=sound.frame_rate,
+        )
 
-    time.sleep(len(sound) / 1000)
-    playback.stop()
+        time.sleep(len(sound) / 1000)
+        playback.stop()
 
-# raise Exception("stop here")
-"""
+    # raise Exception("stop here")
+    """
 
+    if "play_realtime" in set_modes:
+        pygame.mixer.init()
+        pygame.mixer.set_num_channels(8)
 
-if "play_realtime" in set_modes:
-    pygame.mixer.init()
-    pygame.mixer.set_num_channels(8)
+        start_ns = None
 
-    start_ns = None
+    # 60 second clip
+    final_wav = AudioSegment.silent(duration=60 * 1000)
 
-msgs = load_pickle("./log_positions/log_positions_processed.pkl")
+    drone_sounds = allocate_sounds(sounds_normalized)
+    # print("drone sounds: ", drone_sounds)
 
-# 60 second clip
-final_wav = AudioSegment.silent(duration=60 * 1000)
+    # pygame.mixer.Channel(0).play(pygame.mixer.Sound(drone_sounds["cf16"].raw_data))
+    # time.sleep(5)
+    # pygame.mixer.Channel(0).play(pygame.mixer.Sound(drone_sounds["cf13"].raw_data))
 
+    # time.sleep(5)
 
-drone_sounds = allocate_sounds(sounds_normalized)
-# print("drone sounds: ", drone_sounds)
+    # raise Exception("stop here")
 
-# pygame.mixer.Channel(0).play(pygame.mixer.Sound(drone_sounds["cf16"].raw_data))
-# time.sleep(5)
-# pygame.mixer.Channel(0).play(pygame.mixer.Sound(drone_sounds["cf13"].raw_data))
+    drone_buffers = defaultdict(lambda: defaultdict(partial(Queue, maxlen=30)))
+    temp_buffers = defaultdict(lambda: defaultdict(deque))
 
-# time.sleep(5)
+    start_sec = None
 
-# raise Exception("stop here")
+    length_so_far = 0
+    prev_sound_len = 0
 
+    cur_channel = 0
 
-drone_buffers = defaultdict(lambda: defaultdict(partial(Queue, maxlen=30)))
-temp_buffers = defaultdict(lambda: defaultdict(deque))
-
-start_sec = None
-
-
-length_so_far = 0
-prev_sound_len = 0
-
-
-cur_channel = 0
-
-# TODO: change this when the sturcture of saved pkl files changes to a list of arrays (each element in the array is a drone's tf), each element in the list corresponds to a different timestamp
-for msg in msgs:
-
-    # print(msg)
-    drone_name, sec, nsec, x, y, z = msg
-
-    print("=====================================")
-    print("drone name: ", drone_name)
-    print("=====================================")
+    sec = message.transforms[0].header.stamp.sec
 
     if start_sec is None:
         start_sec = sec
 
-    temp_buffers[drone_name]["x_temp"].append(x)
-    temp_buffers[drone_name]["y_temp"].append(y)
-    temp_buffers[drone_name]["z_temp"].append(z)
-
     if sec - start_sec >= 1:
         start_sec = sec
+    else:
+        # don't play a sound if we still need to wait a second
+        return
+
+    for drone_tf in msg_transforms:
+        # print(msg)
+        drone_name, x, y, z = (
+            drone_tf.child_frame_id,
+            drone_tf.transform.translation.x,
+            drone_tf.transform.translation.y,
+            drone_tf.transform.translation.z,
+        )
+
+        print("=====================================")
+        print("drone name: ", drone_name)
+        print("=====================================")
+
+        temp_buffers[drone_name]["x_temp"].append(x)
+        temp_buffers[drone_name]["y_temp"].append(y)
+        temp_buffers[drone_name]["z_temp"].append(z)
 
         err = [
             metric_1(temp_buffers[drone_name][temp], temp_buffers[drone_name][temp][0])
@@ -322,22 +327,21 @@ for msg in msgs:
             )
             print(f"new total length: {length_so_far}")
 
+    # raise Exception("stop here")
 
-# raise Exception("stop here")
+    if "generate_wav" in set_modes:
+        final_wav.export("mixed_sounds.wav", format="wav")
 
-if "generate_wav" in set_modes:
-    final_wav.export("mixed_sounds.wav", format="wav")
+    # we could play the final wav file after generation
+    # if "play_wav" in set_modes:
+    #     playback = sa.play_buffer(
+    #         final_wav.raw_data,
+    #         num_channels=final_wav.channels,
+    #         bytes_per_sample=final_wav.sample_width,
+    #         sample_rate=final_wav.frame_rate,
+    #     )
 
-# we could play the final wav file after generation
-# if "play_wav" in set_modes:
-#     playback = sa.play_buffer(
-#         final_wav.raw_data,
-#         num_channels=final_wav.channels,
-#         bytes_per_sample=final_wav.sample_width,
-#         sample_rate=final_wav.frame_rate,
-#     )
+    #     time.sleep(len(final_wav) / 100)
+    #     playback.stop()
 
-#     time.sleep(len(final_wav) / 100)
-#     playback.stop()
-
-time.sleep(10)
+    time.sleep(10)
