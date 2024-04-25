@@ -31,6 +31,8 @@ class MinimalSubscriber(Node):
         # TODO: this doesn't really work since we need to append to the existing array rather than add a new thing
         # Might want to change this to be a list of arrays, and then work from there.
         # If you change this, also change the load_pickle function to reflect the change.
+        positions = []
+
         for drone_tf in msg.transforms:
             positions.append(
                 (
@@ -48,7 +50,7 @@ class MinimalSubscriber(Node):
         afile.close()
 
         # =========== live processing =================
-        vicon_callback(msg.transforms)
+        process_positions(positions)
 
 
 # TODO: figure out how to store this
