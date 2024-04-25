@@ -83,6 +83,11 @@ def metric_1(arr, pivot):
 def bias_semitone(semitone, scale):
     scale_config = scale_configs[scale]
     i = bisect.bisect_left(scale_config, semitone)
+
+    # for the edge case that i returns 64 (if the semitone is absurdly large), then i goes out of bounds
+    if i == len(scale_config):
+        return scale_config[i - 1]
+
     return (
         scale_config[i]
         # TODO: there was an issue of index out of bounds here.
