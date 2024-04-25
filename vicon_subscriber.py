@@ -3,11 +3,12 @@
 import rclpy
 from rclpy.node import Node
 from tf2_msgs.msg import TFMessage
+from sensor_msgs.msg import Joy
 import pickle
-from brew_chaos_new import *
+from brew_chaos import *
+from pydub import AudioSegment
 
 import pygame
-import keyboard
 
 # from std_msgs.msg import String
 
@@ -19,11 +20,14 @@ class MinimalSubscriber(Node):
         self.subscription = self.create_subscription(
             TFMessage, "tf", self.listener_callback, 1
         )
+        self.joy_subscription = self.create_subscription(
+            Joy, "joy", self.joy_callback, 1
+        )
         self.subscription  # prevent unused variable warning
 
-        setup_processing()
+        self.setup_processing()
 
-    def setup_processing():
+    def setup_processing(self):
         # TODO: first, modulate all wav files to be middle C. this will help with harmonization better. use the midi_pivots to help with this.
 
         # whether the normalized sound starts of in octave 4 (eg, as middle C), or in octave 5 (eg, as C5)
@@ -47,7 +51,7 @@ class MinimalSubscriber(Node):
         # 60 second clip
         self.final_wav = AudioSegment.silent(duration=60 * 1000)
 
-        self.drone_sounds = allocate_sounds(self.sounds_normalized, msgs[0])
+        self.drone_sounds = None
         # print("drone sounds: ", self.drone_sounds)
 
         # pygame.mixer.Channel(0).play(pygame.mixer.Sound(self.drone_sounds["cf16"].raw_data))
@@ -71,7 +75,7 @@ class MinimalSubscriber(Node):
         self.tf_start_sec = None
 
     def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg)
+        # self.get_logger().info('I heard: "%s"' % msg)
         # msg_json = json.load(msg)
         # print(msg_json)
 
@@ -106,6 +110,9 @@ class MinimalSubscriber(Node):
         if self.tf_start_sec is None:
             self.tf_start_sec = int(positions[0][1]) + int(positions[0][2]) / 1e9
 
+        if self.drone_sounds is None:
+            self.drone_sounds = allocate_sounds(self.sounds_normalized, positions)
+
         (
             self.tf_prev_trigger_sec,
             self.realtime_play_start_ns,
@@ -132,11 +139,18 @@ class MinimalSubscriber(Node):
             self.drone_sounds,
         )
 
-    # for this to be detected, will need to hold down the escape key
-    if keyboard.is_pressed("esc"):
-        print("Escape key pressed: generating wav")
-        if "generate_wav" in set_modes:
-            self.final_wav.export("mixed_sounds.wav", format="wav")
+        # # for this to be detected, will need to hold down the escape key
+        # if keyboard.is_pressed("esc"):
+        #     print("Escape key pressed: generating wav")
+        #     if "generate_wav" in self.set_modes:
+        #         self.final_wav.export("mixed_sounds.wav", format="wav")
+
+    def joy_callback(self, msg):
+        # print(msg.buttons[0])
+        if msg.buttons[0] == 1:  # keyboard.is_pressed("esc"):
+            print("A pressed: generating wav")
+            if "generate_wav" in self.set_modes:
+                self.final_wav.export("mixed_sounds_live.wav", format="wav")
 
 
 # TODO: figure out how to store this

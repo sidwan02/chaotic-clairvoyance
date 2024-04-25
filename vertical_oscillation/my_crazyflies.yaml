@@ -21,7 +21,7 @@ all:
       solidGreen: 255
       solidRed: 255
     stabilizer:
-      controller: 1
+      controller: 2
       estimator: 2
   print_latency: true
   unicasts:
@@ -112,19 +112,19 @@ robot_types:
       enabled: false
       marker: painter_frame
 robots:
-  cf13:
+  cf10:
     enabled: true
     initial_position:
     - 0
     - 0
     - 0
     type: cf21_single_marker
-    uri: radio://*/80/2M/E7E7E7E70D
-  cf16:
+    uri: radio://*/100/2M/E7E7E7E70A
+  cf11:
     enabled: true
     initial_position:
     - 0
     - 0.5
     - 0
     type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E710
+    uri: radio://*/100/2M/E7E7E7E70B

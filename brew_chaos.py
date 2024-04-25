@@ -77,11 +77,15 @@ def metric_1(arr, pivot):
     return np.mean(np.array(arr) - pivot)
 
 
+# TODO: the buffer size is around 1 or 2 when we really expect around 70 - 100, see if the buffers are collecting properly. The semitone bias also randomly jumps to -40 ish. We also have a really long delay when updating the sounds every second.
+
+
 def bias_semitone(semitone, scale):
     scale_config = scale_configs[scale]
     i = bisect.bisect_left(scale_config, semitone)
     return (
         scale_config[i]
+        # TODO: there was an issue of index out of bounds here.
         if abs(scale_config[i] - semitone) < abs(scale_config[i - 1] - semitone)
         else scale_config[i - 1]
     )
