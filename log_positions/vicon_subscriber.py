@@ -7,6 +7,7 @@ import pickle
 from brew_chaos_new import *
 
 import pygame
+import keyboard
 
 # from std_msgs.msg import String
 
@@ -67,9 +68,6 @@ class MinimalSubscriber(Node):
 
         self.cur_channel = 0
 
-        if "generate_wav" in self.set_modes:
-            self.final_wav.export("mixed_sounds.wav", format="wav")
-
     def listener_callback(self, msg):
         self.get_logger().info('I heard: "%s"' % msg)
         # msg_json = json.load(msg)
@@ -127,6 +125,12 @@ class MinimalSubscriber(Node):
             self.final_wav,
             self.drone_sounds,
         )
+
+    # for this to be detected, will need to hold down the escape key
+    if keyboard.is_pressed("esc"):
+        print("Escape key pressed: generating wav")
+        if "generate_wav" in set_modes:
+            self.final_wav.export("mixed_sounds.wav", format="wav")
 
 
 # TODO: figure out how to store this
