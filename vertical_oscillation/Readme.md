@@ -13,3 +13,5 @@ If you want to run a simulation:
 
 If you wanna see the ros2 top values in real time as the drone is running:
 ```ros2 topic echo \tf``` or ```\poses```
+
+```ros2 run crazyflie chooser.py --configpath=vertical_oscillation/my_crazyflies.yaml```

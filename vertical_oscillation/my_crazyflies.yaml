@@ -120,11 +120,11 @@ robots:
     - 0
     type: cf21_single_marker
     uri: radio://*/100/2M/E7E7E7E721
-  cf45:
+  cf43:
     enabled: true
     initial_position:
     - 0
     - 0.5
     - 0
     type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E72D
+    uri: radio://*/120/2M/E7E7E7E72B

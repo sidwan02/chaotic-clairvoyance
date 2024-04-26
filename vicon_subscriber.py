@@ -49,7 +49,7 @@ class MinimalSubscriber(Node):
         # print(msgs)
 
         # 60 second clip
-        self.final_wav = AudioSegment.silent(duration=60 * 1000)
+        self.final_wav = AudioSegment.silent(duration=100 * 1000)
 
         self.drone_sounds = None
         # print("drone sounds: ", self.drone_sounds)
@@ -73,6 +73,8 @@ class MinimalSubscriber(Node):
         self.cur_channel = 0
 
         self.tf_start_sec = None
+
+        self.play_queue = deque()
 
     def listener_callback(self, msg):
         # self.get_logger().info('I heard: "%s"' % msg)
@@ -113,7 +115,7 @@ class MinimalSubscriber(Node):
         if self.drone_sounds is None:
             self.drone_sounds = allocate_sounds(self.sounds_normalized, positions)
 
-        print("calling process_positions")
+        # print("calling process_positions")
 
         (
             self.tf_prev_trigger_sec,
@@ -125,6 +127,7 @@ class MinimalSubscriber(Node):
             self.temp_buffers,
             self.final_wav,
             self.drone_sounds,
+            self.play_queue,
         ) = process_positions(
             positions,
             self.scale,
@@ -139,6 +142,7 @@ class MinimalSubscriber(Node):
             self.temp_buffers,
             self.final_wav,
             self.drone_sounds,
+            self.play_queue,
         )
 
         # # for this to be detected, will need to hold down the escape key
