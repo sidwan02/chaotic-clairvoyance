@@ -7,6 +7,8 @@ from pitch_change.find_freq import wav_to_midi
 
 import pygame
 
+from collections import deque
+
 from itertools import chain
 
 from functools import partial
@@ -240,7 +242,18 @@ def setup_processing():
 
     tf_start_sec = int(msgs[0][0][1]) + int(msgs[0][0][2]) / 1e9
 
+    play_queue = deque()
+
+    loop_start_sec = time.time_ns() / 1e9
+
+    tf_prev_sec = tf_start_sec
+
     for msg in msgs:
+        tf_cur_sec = int(msg[0][1]) + int(msg[0][2]) / 1e9
+
+        time.sleep(tf_cur_sec - tf_prev_sec)
+        tf_prev_sec = tf_cur_sec
+
         (
             tf_prev_trigger_sec,
             realtime_play_start_ns,
@@ -251,6 +264,7 @@ def setup_processing():
             temp_buffers,
             final_wav,
             drone_sounds,
+            play_queue,
         ) = process_positions(
             msg,
             scale,
@@ -265,6 +279,7 @@ def setup_processing():
             temp_buffers,
             final_wav,
             drone_sounds,
+            play_queue,
         )
 
     time.sleep(5)
@@ -291,6 +306,7 @@ def process_positions(
     temp_buffers,
     final_wav,
     drone_sounds,
+    play_queue,
 ):
     # print("msg_transforms: ", msg_transforms)
 
@@ -304,12 +320,43 @@ def process_positions(
     if tf_prev_trigger_sec is None:
         tf_prev_trigger_sec = tf_cur_sec
 
-    # print("sec: ", sec)
-    # print("tf_prev_trigger_sec: ", tf_prev_trigger_sec)
+        # print("sec: ", sec)
+        # print("tf_prev_trigger_sec: ", tf_prev_trigger_sec)
 
-    # print("tf_cur_sec: ", tf_cur_sec)
-    # print("tf_prev_trigger_sec: ", tf_prev_trigger_sec)
-    print("elapsed time: ", tf_cur_sec - tf_start_sec)
+        # print("tf_cur_sec: ", tf_cur_sec)
+        # print("tf_prev_trigger_sec: ", tf_prev_trigger_sec)
+
+        # play_queue has elements of the form (insert_time, sound)
+    # print("play_queue: ", play_queue)
+
+    # if realtime_play_start_ns is not None:
+    #     print("cur diff: ", (time.time_ns() - realtime_play_start_ns) / 1e9)
+    # if play_queue:
+    #     print("play queue head: ", play_queue[0][0] / 1000)
+
+    while play_queue and (
+        (realtime_play_start_ns is None)
+        or (
+            ((time.time_ns() - realtime_play_start_ns) / 1e9)
+            >= (play_queue[0][0] / 1000)
+        )
+    ):
+
+        _, hipitch_sound = play_queue.popleft()
+
+        # realtime_play_start_ns = time.time_ns()
+        print("inserting sound")
+        pygame.mixer.Channel(cur_channel).play(
+            pygame.mixer.Sound(hipitch_sound.raw_data)
+        )
+
+        # raise Exception("stop here")
+        if realtime_play_start_ns is None:
+            realtime_play_start_ns = time.time_ns()
+
+        cur_channel = (cur_channel + 1) % 8
+
+    # print("elapsed time: ", tf_cur_sec - tf_start_sec)
     should_play_flag = (tf_cur_sec - tf_prev_trigger_sec) >= 1
 
     for drone_tf in msg_transforms:
@@ -420,23 +467,8 @@ def process_positions(
             print("elapsed time: ", (time.time_ns() - realtime_play_start_ns) / 1e9)
 
         if "play_realtime" in set_modes:
+            play_queue.append((insert_time, hipitch_sound))
             # TODO: this is blocking on the subscriber node, use a deque and play the sound when the time is crossed by looking at the delta from the tf_current_sec
-            while True:
-                if realtime_play_start_ns is None or (
-                    (time.time_ns() - realtime_play_start_ns) / 1e9
-                ) >= (insert_time / 1000):
-                    # realtime_play_start_ns = time.time_ns()
-                    print("inserting sound")
-                    pygame.mixer.Channel(cur_channel).play(
-                        pygame.mixer.Sound(hipitch_sound.raw_data)
-                    )
-
-                    if realtime_play_start_ns is None:
-                        realtime_play_start_ns = time.time_ns()
-
-                    cur_channel = (cur_channel + 1) % 8
-
-                    break
 
         if "generate_wav" in set_modes:
             # https://stackoverflow.com/questions/43406129/python-overlay-more-than-3-wav-files-end-to-end
@@ -484,6 +516,7 @@ def process_positions(
         temp_buffers,
         final_wav,
         drone_sounds,
+        play_queue,
     )
 
 
