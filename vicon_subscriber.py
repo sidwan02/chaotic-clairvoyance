@@ -113,6 +113,8 @@ class MinimalSubscriber(Node):
         if self.drone_sounds is None:
             self.drone_sounds = allocate_sounds(self.sounds_normalized, positions)
 
+        print("calling process_positions")
+
         (
             self.tf_prev_trigger_sec,
             self.realtime_play_start_ns,

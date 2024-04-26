@@ -420,6 +420,7 @@ def process_positions(
             print("elapsed time: ", (time.time_ns() - realtime_play_start_ns) / 1e9)
 
         if "play_realtime" in set_modes:
+            # TODO: this is blocking on the subscriber node, use a deque and play the sound when the time is crossed by looking at the delta from the tf_current_sec
             while True:
                 if realtime_play_start_ns is None or (
                     (time.time_ns() - realtime_play_start_ns) / 1e9
