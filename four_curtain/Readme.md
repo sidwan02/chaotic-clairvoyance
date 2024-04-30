@@ -6,3 +6,8 @@
 6. Place the crazyflies out in the flight space, making sure the correct crazyflies are in the correct locations and oriented correctly.
 6. run ```ros2 launch launch.py``` in your first terminal. RViz should come up. Confirm that it shows what you are expecting and all crazyflies connect.
 7. In a new terminal tab, run ```python3 launch_nodes.py```. This will launch the ROS nodes for each group (with robots and blocks) in your webapp.
+#### For debug purposes: 
+1. Group 1 - lower drones
+2. Group 2,3,4,5 - higher drones
+3. Each up-down takes about 11-12 seconds 
+4. Drones start to land after 60 secs. (prelanding is for upper ones to move back to original position)
