@@ -230,22 +230,25 @@ def setup_processing():
     # set_modes = set(["play_realtime"])
 
 
-    msgs = load_pickle("./log_positions/vertical_oscillation/log_positions_processed.pkl")
+    # msgs = load_pickle("./log_positions/vertical_oscillation/log_positions_processed.pkl")
+    msgs = load_pickle("./four_curtain_log_positions_processed.pkl", verbose=True)
 
-    # print(msgs)
+    print(msgs)
 
     # TODO: once we migrate to the new format, remove these comments
     # for some reson this makes everything strings
 
-    msgs = np.reshape(msgs, (-1, 2, 6))
+    # msgs = np.reshape(msgs, (-1, 2, 6))
 
     # print(msgs[10])
-    # raise Error("stop here")
+    raise Exception("stop here")
 
     num_cf = len([drone_tf[0] for drone_tf in msgs[0]])
     sounds_normalized = generate_normalized_sounds(key, num_cf)
 
     print("num_cf: ", num_cf)
+
+    # TODO: figure out the num_channels thing and modulus to have multiple sounds
 
     if "play_realtime" in set_modes:
         pygame.mixer.init()
@@ -383,7 +386,7 @@ def process_positions(
         _, hipitch_sound = play_queue.popleft()
 
         # realtime_play_start_ns = time.time_ns()
-        print("inserting sound")
+        print("inserting sound at channel ", cur_channel)
         pygame.mixer.Channel(cur_channel).play(
             pygame.mixer.Sound(hipitch_sound.raw_data)
         )
@@ -392,7 +395,7 @@ def process_positions(
         if realtime_play_start_ns is None:
             realtime_play_start_ns = time.time_ns()
 
-        cur_channel = (cur_channel + 1) % 8
+        cur_channel = (cur_channel + 1) % 4
 
     # print("elapsed time: ", tf_cur_sec - tf_start_sec)
     should_play_flag = (tf_cur_sec - tf_prev_trigger_sec) >= 1

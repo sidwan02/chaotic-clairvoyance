@@ -82,7 +82,7 @@ class MinimalSubscriber(Node):
         # print(msg_json)
 
         # ============= store the data for later use =============
-        afile = open("log_positions.pkl", "ab+")
+        afile = open("four_curtain_log_positions.pkl", "ab+")
         pickle.dump(msg, afile)
         afile.close()
 
@@ -103,16 +103,17 @@ class MinimalSubscriber(Node):
                 )
             )
 
-        afile = open("log_positions_processed.pkl", "ab+")
+        afile = open("four_curtain_log_positions_processed.pkl", "ab+")
         pickle.dump(positions, afile)
         afile.close()
+        print("FILE CLOSED ===================================")
 
         # =========== live processing =================
 
         if self.sounds_normalized is None:
             num_cf = len([drone_tf[0] for drone_tf in positions])
             print("num_cf: ", num_cf)
-            self.sounds_normalized = generate_normalized_sounds(self.key, self.base_octave_delta, num_cf)
+            self.sounds_normalized = generate_normalized_sounds(self.key, num_cf)
 
         if self.tf_start_sec is None:
             self.tf_start_sec = int(positions[0][1]) + int(positions[0][2]) / 1e9
