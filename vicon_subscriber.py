@@ -31,14 +31,14 @@ class MinimalSubscriber(Node):
         # TODO: first, modulate all wav files to be middle C. this will help with harmonization better. use the midi_pivots to help with this.
 
         # whether the normalized sound starts of in octave 4 (eg, as middle C), or in octave 5 (eg, as C5)
-        base_octave_delta = [0, 0]
-        key = "E"
+        self.base_octave_delta = [0, 0]
+        self.key = "E"
         self.scale = "minor"
         possible_modes = ["generate_wav", "play_realtime"]
         self.set_modes = set(possible_modes)
         # self.set_modes = set(["play_realtime"])
 
-        self.sounds_normalized = generate_normalized_sounds(key, base_octave_delta)
+        self.sounds_normalized = None
 
         if "play_realtime" in self.set_modes:
             pygame.mixer.init()
@@ -108,6 +108,11 @@ class MinimalSubscriber(Node):
         afile.close()
 
         # =========== live processing =================
+
+        if self.sounds_normalized is None:
+            num_cf = len([drone_tf[0] for drone_tf in positions])
+            print("num_cf: ", num_cf)
+            self.sounds_normalized = generate_normalized_sounds(self.key, self.base_octave_delta, num_cf)
 
         if self.tf_start_sec is None:
             self.tf_start_sec = int(positions[0][1]) + int(positions[0][2]) / 1e9

@@ -1,3 +1,4 @@
+# coding: utf-8
 # https://batulaiko.medium.com/how-to-pitch-shift-in-python-c59b53a84b6d
 # https://github.com/jiaaro/pydub/issues/160#issuecomment-497953546
 
@@ -101,20 +102,42 @@ def bias_semitone(semitone, scale):
         else scale_config[i - 1]
     )
 
+def match_target_amplitude(sound, target_dBFS):
+    change_in_dBFS = target_dBFS - sound.dBFS
+    return sound.apply_gain(change_in_dBFS)
 
-def generate_normalized_sounds(key, base_octave_delta):
+
+def generate_normalized_sounds(key, num_cf):
+    base_octave_delta=[0, 0, 0, 0, 0, 0, 0, 2]
     filenames = [
         # "./sounds/guitar.wav",
         # "./sounds/sound1.wav",
         # "./sounds/sound2.wav",
         # "./sounds/violin.wav",
         "./sounds/violin2.wav",
-        "./sounds/violin2.wav",
+        # "./sounds/violin2.wav",
+        "./wavfiles/choir.wav",
+        # "./wavfiles/guitar_e1.wav",
+        "./wavfiles/guitar-chord.wav",
+        "./wavfiles/piano_c.wav",
+        "./wavfiles/shakuhachi.wav",
+        "./wavfiles/spirit-cello.wav",
+        "./wavfiles/shakuhachi.wav",
+        "./wavfiles/windbell.wav",
         # "./sounds/violin3.wav",
     ]
+
+    
+    filenames = random.choices(filenames, k=num_cf)
+
+    assert len(filenames) == num_cf
+    print("haha", len(filenames))
+
     sounds = [
         AudioSegment.from_file(filename, format=filename[-3:]) for filename in filenames
     ]
+
+    print(len(sounds))
 
     midi_original = [wav_to_midi(fn, 0, 1000) for fn in filenames]
 
@@ -123,8 +146,19 @@ def generate_normalized_sounds(key, base_octave_delta):
         for sound, midi, oc_del in zip(sounds, midi_original, base_octave_delta)
     ]
 
+    print("normie: ", len(sounds_normalized))
+
+    # https://github.com/jiaaro/pydub/issues/90
+    # https://github.com/jiaaro/pydub/blob/master/API.markdown#audiosegmentdbfs
+    sounds_normalized = [
+        match_target_amplitude(sound, -20)
+        for sound in sounds_normalized
+    ]
+    
+    
+
     # test the sounds
-    """
+    '''
     for sound in sounds_normalized:
         playback = sa.play_buffer(
             sound.raw_data,
@@ -136,8 +170,8 @@ def generate_normalized_sounds(key, base_octave_delta):
         time.sleep(len(sound) / 1000)
         playback.stop()
 
-    # raise Exception("stop here")
-    """
+    raise Exception("stop here")
+    '''
 
     return sounds_normalized
 
@@ -189,22 +223,14 @@ def setup_processing():
     # TODO: first, modulate all wav files to be middle C. this will help with harmonization better. use the midi_pivots to help with this.
 
     # whether the normalized sound starts of in octave 4 (eg, as middle C), or in octave 5 (eg, as C5)
-    base_octave_delta = [0, 0]
     key = "C"
     scale = "minor"
     possible_modes = ["generate_wav", "play_realtime"]
     set_modes = set(possible_modes)
     # set_modes = set(["play_realtime"])
 
-    sounds_normalized = generate_normalized_sounds(key, base_octave_delta)
 
-    if "play_realtime" in set_modes:
-        pygame.mixer.init()
-        pygame.mixer.set_num_channels(8)
-
-        realtime_play_start_ns = None
-
-    msgs = load_pickle("./log_positions/log_positions_processed.pkl")
+    msgs = load_pickle("./log_positions/vertical_oscillation/log_positions_processed.pkl")
 
     # print(msgs)
 
@@ -215,6 +241,18 @@ def setup_processing():
 
     # print(msgs[10])
     # raise Error("stop here")
+
+    num_cf = len([drone_tf[0] for drone_tf in msgs[0]])
+    sounds_normalized = generate_normalized_sounds(key, num_cf)
+
+    print("num_cf: ", num_cf)
+
+    if "play_realtime" in set_modes:
+        pygame.mixer.init()
+        pygame.mixer.set_num_channels(8)
+
+        realtime_play_start_ns = None
+
 
     # 60 second clip
     final_wav = AudioSegment.silent(duration=60 * 1000)
@@ -427,6 +465,8 @@ def process_positions(
         temp_buffers[drone_name]["z_temp"] = deque()
 
         sound = drone_sounds[drone_name]
+
+        print("drone sound: ", sound)
         # print("=====================================")
         # print("drone name: ", drone_name)
         # print("=====================================")

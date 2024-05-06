@@ -1,6 +1,6 @@
 # chaotic-clairvoyance
 
 Installation:
-
+- python3 -m pip install -U pygame --user
 - pip install pydub
-- conda install -c main ffmpeg
+- pip install simpleaudio
