@@ -102,42 +102,90 @@ def bias_semitone(semitone, scale):
         else scale_config[i - 1]
     )
 
+
 def match_target_amplitude(sound, target_dBFS):
     change_in_dBFS = target_dBFS - sound.dBFS
     return sound.apply_gain(change_in_dBFS)
 
 
-def generate_normalized_sounds(key, num_cf):
-    base_octave_delta=[0, 0, 0, 0, 0, 0, 0, 2]
-    filenames = [
-        # "./sounds/guitar.wav",
-        # "./sounds/sound1.wav",
-        # "./sounds/sound2.wav",
-        # "./sounds/violin.wav",
-        "./sounds/violin2.wav",
-        # "./sounds/violin2.wav",
-        "./wavfiles/choir.wav",
-        # "./wavfiles/guitar_e1.wav",
-        "./wavfiles/guitar-chord.wav",
-        "./wavfiles/piano_c.wav",
-        "./wavfiles/shakuhachi.wav",
-        "./wavfiles/spirit-cello.wav",
-        "./wavfiles/shakuhachi.wav",
-        "./wavfiles/windbell.wav",
-        # "./sounds/violin3.wav",
-    ]
+def generate_normalized_sounds(key, num_cf, config=2):
+    if config == 1:
+        base_octave_delta = [-1, 0, 0, 0, 0, 0, 0, 0]
+        filenames = [
+            # "./sounds/guitar.wav",
+            # "./sounds/sound1.wav",
+            # "./sounds/sound2.wav",
+            # "./sounds/violin.wav",
+            "./sounds/violin2.wav",
+            "./sounds/violin2.wav",
+            "./sounds/violin2.wav",
+            "./sounds/violin2.wav",
+            "./sounds/violin2.wav",
+            "./sounds/violin2.wav",
+            "./sounds/violin2.wav",
+            "./sounds/violin2.wav",
+            # "./sounds/violin2.wav",
+            # "./sounds/violin3.wav",
+        ]
+    elif config == 2:
+        base_octave_delta = [0, 0, 0, 0, 0, 0, -1, -1]
+        filenames = [
+            # "./wavfiles/orch-002-boom_16bd.wav",  # -2 octave
+            # "./wavfiles/large-wind-chime-2-eb575_16bd.wav",
+            "./wavfiles/windchime1_16bd.wav",
+            "./wavfiles/windchime1_16bd.wav",
+            # "./wavfiles/windchime1_16bd.wav",
+            # "./wavfiles/windchime1_16bd.wav",
+            "./sounds/violin2.wav",
+            # "./sounds/violin2.wav",
+            # "./sounds/violin2.wav",
+            # "./sounds/violin2.wav",
+            # "./wavfiles/shakuhachi.wav",
+            "./wavfiles/shakuhachi.wav",
+            "./wavfiles/shakuhachi.wav",
+            # "./wavfiles/spirit_cello_cropped.wav",
+            "./wavfiles/spirit_cello_cropped.wav",
+            # "./wavfiles/guitar_3rd_string_open_e.wav",
+            "./wavfiles/synth-pad-molten-iron-in-f3_16bd.wav",
+            "./wavfiles/synth-pad-molten-iron-in-f3_16bd.wav",
+            # "./wavfiles/synth-pad-molten-iron-in-f3_16bd.wav",
+            # TODO: support non wav files in the helper function wav_to_midi
+            # "./wavfiles/hand-crank-music-box-g5-note_16bd.flac",
+        ]
+    elif config == 3:
+        base_octave_delta = [-1, 0, 0, 0, 0, 0, 0, 0]
+        filenames = [
+            # "./sounds/guitar.wav",
+            # "./sounds/sound1.wav",
+            # "./sounds/sound2.wav",
+            # "./sounds/violin.wav",
+            "./sounds/violin2.wav",
+            # "./sounds/violin2.wav",
+            "./wavfiles/choir.wav",
+            # "./wavfiles/guitar_e1.wav",
+            "./wavfiles/guitar-chord.wav",
+            "./wavfiles/piano_c.wav",
+            "./wavfiles/shakuhachi.wav",
+            "./wavfiles/spirit-cello.wav",
+            "./wavfiles/shakuhachi.wav",
+            "./wavfiles/windbell.wav",
+            # "./sounds/violin3.wav",
+        ]
 
-    
-    filenames = random.choices(filenames, k=num_cf)
+    # # print(filenames)
+    # # raise Exception("stop here")
 
-    assert len(filenames) == num_cf
-    print("haha", len(filenames))
+    # assert len(filenames) == num_cf
+    # print("haha", len(filenames))
 
     sounds = [
-        AudioSegment.from_file(filename, format=filename[-3:]) for filename in filenames
+        AudioSegment.from_file(filename, format=filename.split(".")[-1])
+        for filename in filenames
     ]
 
-    print(len(sounds))
+    sounds_normalized = sounds
+
+    # print(len(sounds))
 
     midi_original = [wav_to_midi(fn, 0, 1000) for fn in filenames]
 
@@ -146,32 +194,30 @@ def generate_normalized_sounds(key, num_cf):
         for sound, midi, oc_del in zip(sounds, midi_original, base_octave_delta)
     ]
 
-    print("normie: ", len(sounds_normalized))
+    sounds_normalized = random.sample(sounds_normalized, num_cf)
+
+    # print("normie: ", len(sounds_normalized))
 
     # https://github.com/jiaaro/pydub/issues/90
     # https://github.com/jiaaro/pydub/blob/master/API.markdown#audiosegmentdbfs
     sounds_normalized = [
-        match_target_amplitude(sound, -20)
-        for sound in sounds_normalized
+        match_target_amplitude(sound, -40) for sound in sounds_normalized
     ]
-    
-    
 
     # test the sounds
-    '''
-    for sound in sounds_normalized:
-        playback = sa.play_buffer(
-            sound.raw_data,
-            num_channels=sound.channels,
-            bytes_per_sample=sound.sample_width,
-            sample_rate=sound.frame_rate,
-        )
 
-        time.sleep(len(sound) / 1000)
-        playback.stop()
+    # for sound in sounds_normalized:
+    #     playback = sa.play_buffer(
+    #         sound.raw_data,
+    #         num_channels=sound.channels,
+    #         bytes_per_sample=sound.sample_width,
+    #         sample_rate=sound.frame_rate,
+    #     )
 
-    raise Exception("stop here")
-    '''
+    #     time.sleep(len(sound) / 1000)
+    #     playback.stop()
+
+    # raise Exception("stop here")
 
     return sounds_normalized
 
@@ -218,6 +264,8 @@ key_to_midi = {
     "B": 71,
 }
 
+num_channels = 32
+
 
 def setup_processing():
     # TODO: first, modulate all wav files to be middle C. this will help with harmonization better. use the midi_pivots to help with this.
@@ -229,11 +277,12 @@ def setup_processing():
     set_modes = set(possible_modes)
     # set_modes = set(["play_realtime"])
 
-
     # msgs = load_pickle("./log_positions/vertical_oscillation/log_positions_processed.pkl")
-    msgs = load_pickle("./four_curtain_log_positions_processed.pkl", verbose=True)
+    msgs = load_pickle(
+        "./results/four_curtain/four_curtain_log_positions_processed.pkl", verbose=True
+    )
 
-    print(msgs)
+    # print(msgs)
 
     # TODO: once we migrate to the new format, remove these comments
     # for some reson this makes everything strings
@@ -241,7 +290,7 @@ def setup_processing():
     # msgs = np.reshape(msgs, (-1, 2, 6))
 
     # print(msgs[10])
-    raise Exception("stop here")
+    # raise Exception("stop here")
 
     num_cf = len([drone_tf[0] for drone_tf in msgs[0]])
     sounds_normalized = generate_normalized_sounds(key, num_cf)
@@ -252,13 +301,12 @@ def setup_processing():
 
     if "play_realtime" in set_modes:
         pygame.mixer.init()
-        pygame.mixer.set_num_channels(8)
+        pygame.mixer.set_num_channels(num_channels)
 
         realtime_play_start_ns = None
 
-
     # 60 second clip
-    final_wav = AudioSegment.silent(duration=60 * 1000)
+    final_wav = AudioSegment.silent(duration=120 * 1000)
 
     drone_sounds = allocate_sounds(sounds_normalized, msgs[0])
     # print("drone sounds: ", drone_sounds)
@@ -395,7 +443,7 @@ def process_positions(
         if realtime_play_start_ns is None:
             realtime_play_start_ns = time.time_ns()
 
-        cur_channel = (cur_channel + 1) % 4
+        cur_channel = (cur_channel + 1) % num_channels
 
     # print("elapsed time: ", tf_cur_sec - tf_start_sec)
     should_play_flag = (tf_cur_sec - tf_prev_trigger_sec) >= 1
