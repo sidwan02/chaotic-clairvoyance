@@ -183,11 +183,11 @@ def generate_normalized_sounds(key, num_cf, config=2):
         for filename in filenames
     ]
 
-    sounds_normalized = sounds
+    # sounds_normalized = sounds
 
     # print(len(sounds))
 
-    midi_original = [wav_to_midi(fn, 0, 1000) for fn in filenames]
+    midi_original = [wav_to_midi(fn, 0, 500) for fn in filenames]
 
     sounds_normalized = [
         change_semitones(sound, key_to_midi[key] - midi + oc_del * 12, 5 * 1000)
@@ -281,6 +281,9 @@ def setup_processing():
     msgs = load_pickle(
         "./results/four_curtain/four_curtain_log_positions_processed.pkl", verbose=True
     )
+    # msgs = load_pickle(
+    #     "./results/vertical_oscillation/log_positions_processed.pkl", verbose=True
+    # )
 
     # print(msgs)
 
