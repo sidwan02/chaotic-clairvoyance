@@ -111,20 +111,26 @@ robot_types:
       dynamics: default
       enabled: false
       marker: painter_frame
+  cf_spray_painter:
+    big_quad: true
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: default_single_marker
 robots:
-  cf33:
-    enabled: true
-    initial_position:
-    - 0
-    - 0
-    - 0
-    type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E721
-  cf43:
+  cf20:
     enabled: true
     initial_position:
     - 0
     - 0.5
     - 0
     type: cf21_single_marker
-    uri: radio://*/120/2M/E7E7E7E72B
+    uri: radio://*/100/2M/E7E7E7E714
+  cf21:
+    enabled: true
+    initial_position:
+    - 0
+    - 0
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/120/2M/E7E7E7E715

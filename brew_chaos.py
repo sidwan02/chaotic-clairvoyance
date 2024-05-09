@@ -108,7 +108,7 @@ def match_target_amplitude(sound, target_dBFS):
     return sound.apply_gain(change_in_dBFS)
 
 
-def generate_normalized_sounds(key, num_cf, config=2):
+def generate_normalized_sounds(key, num_cf, config=1):
     if config == 1:
         base_octave_delta = [-1, 0, 0, 0, 0, 0, 0, 0]
         filenames = [
@@ -264,6 +264,7 @@ key_to_midi = {
     "B": 71,
 }
 
+# make this 8 channels for the vertical oscillation and 32 for the four curtain
 num_channels = 32
 
 
@@ -438,9 +439,17 @@ def process_positions(
 
         # realtime_play_start_ns = time.time_ns()
         print("inserting sound at channel ", cur_channel)
-        pygame.mixer.Channel(cur_channel).play(
-            pygame.mixer.Sound(hipitch_sound.raw_data)
-        )
+        # pygame.mixer.Channel(cur_channel).play(
+        #     pygame.mixer.Sound(hipitch_sound.raw_data)
+        # )
+
+        # pygame.mixer.find_channel(True).play(pygame.mixer.Sound(hipitch_sound.raw_data))
+
+        chosen_channel = pygame.mixer.find_channel()
+        if chosen_channel is not None:
+            chosen_channel.play(pygame.mixer.Sound(hipitch_sound.raw_data))
+        else:
+            print("no available channels")
 
         # raise Exception("stop here")
         if realtime_play_start_ns is None:

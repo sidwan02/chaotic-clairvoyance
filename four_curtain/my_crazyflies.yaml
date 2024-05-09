@@ -21,7 +21,7 @@ all:
       solidGreen: 255
       solidRed: 255
     stabilizer:
-      controller: 1
+      controller: 2
       estimator: 2
   print_latency: true
   unicasts:
@@ -111,70 +111,74 @@ robot_types:
       dynamics: default
       enabled: false
       marker: painter_frame
-    posCtlPid:
-      thrustBase: 29491
+  cf_spray_painter:
+    big_quad: true
+    motion_capture:
+      dynamics: default
+      enabled: true
+      marker: default_single_marker
 robots:
   cf10:
     enabled: true
     initial_position:
     - 1
+    - 0
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/80/2M/E7E7E7E70A
+  cf12:
+    enabled: true
+    initial_position:
+    - 0.5
     - 1
     - 0
     type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E70A
+    uri: radio://*/80/2M/E7E7E7E70C
+  cf16:
+    enabled: true
+    initial_position:
+    - 0.5
+    - 0
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/80/2M/E7E7E7E710
   cf20:
     enabled: true
     initial_position:
-    - 0.5
     - 1
+    - 1.5
     - 0
     type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E714
+    uri: radio://*/80/2M/E7E7E7E714
   cf21:
     enabled: true
     initial_position:
-    - 0.5
-    - 0
+    - 1
+    - 1
     - 0
     type: cf21_single_marker
-    uri: radio://*/120/2M/E7E7E7E715
+    uri: radio://*/80/2M/E7E7E7E715
   cf35:
     enabled: true
     initial_position:
     - 0.5
-    - 0.5
+    - 1.5
     - 0
     type: cf21_single_marker
     uri: radio://*/80/2M/E7E7E7E723
-  cf38:
-    enabled: true
-    initial_position:
-    - 0.5
-    - 1.5
-    - 0
-    type: cf21_single_marker
-    uri: radio://*/120/2M/E7E7E7E726
-  cf48:
-    enabled: true
-    initial_position:
-    - 1
-    - 1.5
-    - 0
-    type: cf21_single_marker
-    uri: radio://*/120/2M/E7E7E7E730
   cf60:
     enabled: true
     initial_position:
-    - 1
-    - 0
+    - 0.5
+    - 0.5
     - 0
     type: cf21_single_marker
     uri: radio://*/80/2M/E7E7E7E73C
-  cf65:
+  cf9:
     enabled: true
     initial_position:
     - 1
     - 0.5
     - 0
     type: cf21_single_marker
-    uri: radio://*/80/2M/E7E7E7E741
+    uri: radio://*/80/2M/E7E7E7E709
