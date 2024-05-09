@@ -82,7 +82,7 @@ class worker_node(Node):
         # Block Name: low
         start_time = 0.02
         self.timeHelper.sleepUntil(start_time)
-        takeoff(groupState, 0.8, 3)
+        takeoff(groupState, 0.5, 3)
 
         self.done = True
 

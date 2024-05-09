@@ -80,7 +80,7 @@ class worker_node(Node):
         )
         ### ---------Insert Execution Code Here------------
         # Block Name: landing
-        start_time = 100.00
+        start_time = 60.00
         self.timeHelper.sleepUntil(start_time)
         land(groupState, 0, 3)
 

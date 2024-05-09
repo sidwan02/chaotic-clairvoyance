@@ -114,67 +114,67 @@ robot_types:
     posCtlPid:
       thrustBase: 29491
 robots:
-  cf1:
+  cf10:
     enabled: true
     initial_position:
-    - 0.5
-    - 0
-    - 0
-    type: cf21_m1
-    uri: radio://*/80/2M/E7E7E7E701
-  cf2:
-    enabled: true
-    initial_position:
-    - 0.5
-    - 0.5
+    - 1
+    - 1
     - 0
     type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E702
-  cf3:
+    uri: radio://*/100/2M/E7E7E7E70A
+  cf20:
     enabled: true
     initial_position:
     - 0.5
     - 1
     - 0
     type: cf21_single_marker
-    uri: radio://*/120/2M/E7E7E7E703
-  cf4:
+    uri: radio://*/100/2M/E7E7E7E714
+  cf21:
+    enabled: true
+    initial_position:
+    - 0.5
+    - 0
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/120/2M/E7E7E7E715
+  cf35:
+    enabled: true
+    initial_position:
+    - 0.5
+    - 0.5
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/80/2M/E7E7E7E723
+  cf38:
     enabled: true
     initial_position:
     - 0.5
     - 1.5
     - 0
-    type: cf21_m4
-    uri: radio://*/80/2M/E7E7E7E704
-  cf5:
+    type: cf21_single_marker
+    uri: radio://*/120/2M/E7E7E7E726
+  cf48:
+    enabled: true
+    initial_position:
+    - 1
+    - 1.5
+    - 0
+    type: cf21_single_marker
+    uri: radio://*/120/2M/E7E7E7E730
+  cf60:
     enabled: true
     initial_position:
     - 1
     - 0
     - 0
     type: cf21_single_marker
-    uri: radio://*/100/2M/E7E7E7E705
-  cf6:
+    uri: radio://*/80/2M/E7E7E7E73C
+  cf65:
     enabled: true
     initial_position:
     - 1
     - 0.5
     - 0
     type: cf21_single_marker
-    uri: radio://*/120/2M/E7E7E7E706
-  cf7:
-    enabled: true
-    initial_position:
-    - 1
-    - 1
-    - 0
-    type: cf_big
-    uri: radio://*/80/2M/E7E7E7E707
-  cf8:
-    enabled: true
-    initial_position:
-    - 1
-    - 1.5
-    - 0
-    type: cf21_m3
-    uri: radio://*/80/2M/E7E7E7E708
+    uri: radio://*/80/2M/E7E7E7E741
