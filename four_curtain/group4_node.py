@@ -83,20 +83,22 @@ class worker_node(Node):
         start_time = 0.02
         self.timeHelper.sleepUntil(start_time)
         takeoff(groupState, 1.7, 3)
-        goto_velocity_relative_position(groupState, -0.5, 0, 0, 0.25)
+        goto_duration_relative(groupState, -0.5, 0, 0, 4)
         # Block Name: high move
-        start_time = 3.2
+        start_time = 9
         self.timeHelper.sleepUntil(start_time)
         for i in range(4):
-            goto_velocity_relative_position(groupState, 0, 0, -0.5, 0.25)
-            goto_velocity_relative_position(groupState, 0, 0, 0.5, 0.25)
+            goto_duration_relative(groupState, 0, 0, -0.5, 4.0)
+            goto_duration_relative(groupState, 0, 0, 0.5, 4.0)
+            # goto_velocity_relative_position(groupState, 0, 0, -0.5, 0.25)
+            # goto_velocity_relative_position(groupState, 0, 0, 0.5, 0.25)
             start_time += 0.5
 
         # Block Name: New Block 7
         start_time = 50
         self.timeHelper.sleepUntil(start_time)
         # prelanding
-        goto_velocity_relative_position(groupState, 0.5, 0, 0, 0.25)
+        goto_duration_relative(groupState, 0.5, 0, 0, 4)
 
         self.done = True
 
